@@ -1,0 +1,182 @@
+{
+  "info": {
+    "_postman_id": "crs-buoi-04-api-gateway",
+    "name": "CRS_Buoi_04 - API Gateway & JWT Security Test",
+    "description": "Collection test toàn bộ hệ thống CRS Microservices qua API Gateway (localhost:8080) bao gồm Auth, Course, Registration và Partner API Key.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Auth - Login Admin (cổng 8080)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "2. Auth - Login Student (cổng 8080)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"student1\",\n  \"password\": \"student123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "3. Course - Xem danh sách môn (Public - No Token)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/courses?keyword=&page=0&size=10",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "courses"],
+          "query": [
+            { "key": "keyword", "value": "" },
+            { "key": "page", "value": "0" },
+            { "key": "size", "value": "10" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "4. Course - Tạo môn mới (Thiếu Authorization Header -> 401 Gateway)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tenMonHoc\": \"Kien truc phan mem\",\n  \"soTinChi\": 3,\n  \"soChoToiDa\": 30\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/courses",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "courses"]
+        }
+      }
+    },
+    {
+      "name": "5. Course - Tạo môn mới (Token Student -> 403 CourseService)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer <DÁN_TOKEN_STUDENT_TẠI_ĐÂY>" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tenMonHoc\": \"Thiet ke he thong\",\n  \"soTinChi\": 3,\n  \"soChoToiDa\": 25\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/courses",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "courses"]
+        }
+      }
+    },
+    {
+      "name": "6. Course - Tạo môn mới (Token Admin -> 201 Created)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer <DÁN_TOKEN_ADMIN_TẠI_ĐÂY>" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tenMonHoc\": \"Kien truc phan mem\",\n  \"soTinChi\": 3,\n  \"soChoToiDa\": 30\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/courses",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "courses"]
+        }
+      }
+    },
+    {
+      "name": "7. Registration - Đăng ký môn (Token Student -> 201 Created)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer <DÁN_TOKEN_STUDENT_TẠI_ĐÂY>" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentId\": 1,\n  \"courseId\": 1\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/registrations",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "registrations"]
+        }
+      }
+    },
+    {
+      "name": "8. Partner - Tra cứu public (Có X-API-KEY -> 200)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "X-API-KEY", "value": "crs-partner-key-2026" }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/public/courses",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "public", "courses"]
+        }
+      }
+    },
+    {
+      "name": "9. Partner - Tra cứu public (Sai hoặc thiếu X-API-KEY -> 403)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/public/courses",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "public", "courses"]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,209 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "CRS Microservices - Buổi 3",
+		"description": "Postman collection cho Buổi 3: Course Service Search/Pagination/Internal API và Registration Service Inter-service REST communication.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "course-service (Port 8082)",
+			"item": [
+				{
+					"name": "1. GET /courses (Tìm kiếm & Phân trang)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8082/courses?keyword=Java&page=0&size=5&sort=tenMonHoc,asc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"courses"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "Java",
+									"description": "Tìm kiếm tên môn học chứa từ khóa 'Java'"
+								},
+								{
+									"key": "page",
+									"value": "0",
+									"description": "Trang đầu tiên (bắt đầu từ 0)"
+								},
+								{
+									"key": "size",
+									"value": "5",
+									"description": "Số bản ghi trên 1 trang"
+								},
+								{
+									"key": "sort",
+									"value": "tenMonHoc,asc",
+									"description": "Sắp xếp theo tên môn học tăng dần"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. PATCH /internal/courses/{id}/reserve-seat (Trừ 1 chỗ)",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8082/internal/courses/3/reserve-seat",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"internal",
+								"courses",
+								"3",
+								"reserve-seat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. PATCH /internal/courses/{id}/release-seat (Hoàn 1 chỗ)",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8082/internal/courses/3/release-seat",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"internal",
+								"courses",
+								"3",
+								"release-seat"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "registration-service (Port 8083)",
+			"item": [
+				{
+					"name": "1. POST /registrations (Đăng ký thành công - 201)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"studentId\": 1,\n    \"courseId\": 3\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8083/registrations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"registrations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. POST /registrations (Đăng ký trùng lặp - 409)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"studentId\": 1,\n    \"courseId\": 3\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8083/registrations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"registrations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. DELETE /registrations/{id} (Hủy đăng ký - 200)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/registrations/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"registrations",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4. POST /registrations (Môn không tồn tại - 409)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"studentId\": 1,\n    \"courseId\": 9999\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8083/registrations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"registrations"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
